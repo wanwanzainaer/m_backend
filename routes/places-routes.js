@@ -1,10 +1,9 @@
-const express = require('express');
+const placesController = require('../controllers/placesController');
+const router = require('express').Router();
 
-const router = express.Router();
+router.get('/:placeId', placesController.findPlaceByPlaceId);
+router.patch('/:placeId', placesController.updatePlace);
 
-router.get('/', (req, res) => {
-  console.log('GET Request in places');
-  res.json({ message: 'It Works' });
-});
-
+router.get('/user/:uid', placesController.findPlaceByUserId);
+router.post('/', placesController.createPlace);
 module.exports = router;
