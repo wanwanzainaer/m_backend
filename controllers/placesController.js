@@ -1,7 +1,7 @@
 const { v4: uuid } = require('uuid');
 
 const HttpError = require('../utils/http-error');
-const DUMMY_PLACES = [
+let DUMMY_PLACES = [
   {
     id: 'p1',
     title: 'Empire State Building',
@@ -31,19 +31,19 @@ exports.findPlaceByPlaceId = (req, res, next) => {
   res.json({ place });
 };
 
-exports.findPlaceByUserId = (req, res, next) => {
+exports.findPlacesByUserId = (req, res, next) => {
   const userId = req.params.uid;
-  const place = DUMMY_PLACES.find((p) => {
+  const places = DUMMY_PLACES.filter((p) => {
     return p.creator === userId;
   });
-  if (!place) {
+  if (!places || places.length === 0) {
     const error = new HttpError(
       'Could not find  a place for the provided user id',
       404
     );
     return next(error);
   }
-  res.json({ place });
+  res.json({ places });
 };
 
 exports.createPlace = (req, res, next) => {
@@ -71,4 +71,12 @@ exports.updatePlace = (req, res, next) => {
   DUMMY_PLACES[placeIndex] = updatedPlace;
 
   res.status(200).json({ place: updatedPlace });
+};
+
+exports.deletePlace = (req, res, next) => {
+  console.log('here');
+  const { placeId } = req.params;
+  DUMMY_PLACES = DUMMY_PLACES.filter((p) => p.id !== placeId);
+  console.log('Delete place');
+  res.status(200).json({});
 };
