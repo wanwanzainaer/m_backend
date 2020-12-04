@@ -1,7 +1,17 @@
 const placesController = require('../controllers/placesController');
+const { check } = require('express-validator');
+
 const router = require('express').Router();
 
-router.post('/', placesController.createPlace);
+router.post(
+  '/',
+  [
+    check('title').not().isEmpty(),
+    check('description').isLength({ min: 5 }),
+    check('address').not().isEmpty(),
+  ],
+  placesController.createPlace
+);
 router.get('/:placeId', placesController.findPlaceByPlaceId);
 router.patch('/:placeId', placesController.updatePlace);
 router.delete('/:placeId', placesController.deletePlace);
