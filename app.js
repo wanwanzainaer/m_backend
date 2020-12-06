@@ -19,7 +19,7 @@ app.use('*', (req, res, next) => {
 });
 
 mongoose
-  .connect(mongoDB_URI)
+  .connect(mongoDB_URI, { useUnifiedTopology: true, useNewUrlParser: true })
   .then(() => {
     app.listen(5000, () => {
       console.log('Listening port 5000');

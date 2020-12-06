@@ -2,7 +2,6 @@ const placesController = require('../controllers/placesController');
 const { check } = require('express-validator');
 
 const router = require('express').Router();
-
 router.post(
   '/',
   [
