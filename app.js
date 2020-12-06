@@ -1,4 +1,6 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const mongoDB_URI = require('./utils/config');
 const placesRoutes = require('./routes/places-routes');
 const usersRouts = require('./routes/users-routes');
 const errorController = require('./controllers/errorController');
@@ -15,6 +17,12 @@ app.use('*', (req, res, next) => {
   throw new HttpError('Can not found the page', 404);
   return;
 });
-app.listen(5000, () => {
-  console.log('Listening port 5000');
-});
+
+mongoose
+  .connect(mongoDB_URI)
+  .then(() => {
+    app.listen(5000, () => {
+      console.log('Listening port 5000');
+    });
+  })
+  .catch();
