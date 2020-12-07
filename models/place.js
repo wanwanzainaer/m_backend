@@ -12,7 +12,7 @@ const placeSchema = new Schema(
       lat: { type: Number, required: true },
       lng: { type: Number, required: true },
     },
-    creator: { type: String, required: true },
+    creator: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
   },
   {
     toJSON: {
