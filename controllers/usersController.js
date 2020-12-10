@@ -12,11 +12,12 @@ exports.getUsers = async (req, res, next) => {
       HttpError('Could not find any users, in the internal service error ', 500)
     );
   }
-  res.json({ users });
+  res.status(200).json({ users });
 };
 
 exports.signup = async (req, res, next) => {
   const error = validationResult(req);
+  console.log(req.body);
   if (!error.isEmpty()) {
     return next(
       new HttpError('Invalid inputs passed, please check your data', 422)
@@ -73,5 +74,5 @@ exports.login = async (req, res, next) => {
     return;
   }
 
-  res.status(200).json({ message: 'Logged in' });
+  res.status(200).json({ message: 'Logged in', user: identifiedUser });
 };

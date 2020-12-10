@@ -21,7 +21,6 @@ exports.findPlaceByPlaceId = async (req, res, next) => {
       500
     );
   }
-  console.log(place);
   if (!place) {
     const error = new HttpError(
       'Could not find  a place for the provided id',
@@ -52,7 +51,6 @@ exports.findPlacesByUserId = async (req, res, next) => {
 };
 
 exports.createPlace = async (req, res, next) => {
-  console.log(req.body);
   const error = validationResult(req);
   if (!error.isEmpty()) {
     return next(
