@@ -1,3 +1,4 @@
+const fs = require('fs');
 const HttpError = require('../utils/http-error');
 const { validationResult } = require('express-validator');
 const getCoordsForAddress = require('../utils/location');
@@ -68,8 +69,7 @@ exports.createPlace = async (req, res, next) => {
   }
   const createdPlace = new Place({
     title,
-    image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Empire_State_Building_%28aerial_view%29.jpg/400px-Empire_State_Building_%28aerial_view%29.jpg',
+    image: req.file.path,
     description,
     location: coordinates,
     address,
@@ -143,9 +143,9 @@ exports.deletePlace = async (req, res, next) => {
   if (!place) {
     return next(new HttpError('Could not find place for this id', 404));
   }
-
+  const imagePath = place.image;
   try {
-    const sess = mongoose.startSession();
+    const sess = await mongoose.startSession();
     sess.startTransaction();
     await place.remove({ session: sess });
     place.creator.places.pull(place);
@@ -156,6 +156,8 @@ exports.deletePlace = async (req, res, next) => {
       new HttpError('Something went wrong, could not delete place', 500)
     );
   }
+
+  fs.unlink(imagePath, (err) => console.log(err));
 
   res.status(200).json({});
 };

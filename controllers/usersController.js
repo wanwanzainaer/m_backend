@@ -17,7 +17,6 @@ exports.getUsers = async (req, res, next) => {
 
 exports.signup = async (req, res, next) => {
   const error = validationResult(req);
-  console.log(req.body);
   if (!error.isEmpty()) {
     return next(
       new HttpError('Invalid inputs passed, please check your data', 422)
@@ -42,8 +41,9 @@ exports.signup = async (req, res, next) => {
   const createdUser = new User({
     name,
     email,
-    image: 'https://live.staticflickr.com/7631/26849088292_36fc52ee90_b.jpg',
+    image: req.file.path,
     password,
+    places: [],
   });
 
   try {
