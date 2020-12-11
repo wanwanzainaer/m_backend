@@ -1,8 +1,10 @@
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const HttpError = require('../utils/http-error');
 const User = require('../models/user');
+const { create } = require('../models/user');
 
 exports.getUsers = async (req, res, next) => {
   let users;
@@ -59,7 +61,22 @@ exports.signup = async (req, res, next) => {
     const error = new HttpError('Creating user failed, please try again', 500);
     return next(error);
   }
-  res.status(201).json({ user: createdUser });
+
+  let token;
+  try {
+    token = jwt.sign(
+      { userId: createdUser.id, email: createdUser.email },
+      'asjidjc_sajdfi@sdfji',
+      { expiresIn: '30d' }
+    );
+  } catch (err) {
+    const error = new HttpError('Creating user failed, please try again', 500);
+    return next(error);
+  }
+
+  res
+    .status(201)
+    .json({ userId: createdUser, email: createdUser.email, token });
 };
 
 exports.login = async (req, res, next) => {
@@ -93,6 +110,18 @@ exports.login = async (req, res, next) => {
       new HttpError('Invalid credentials, could not log you in', 401)
     );
   }
-
-  res.status(200).json({ message: 'Logged in', user: identifiedUser });
+  let token;
+  try {
+    token = jwt.sign(
+      { userId: identifiedUser.id, email: identifiedUser.email },
+      'asjidjc_sajdfi@sdfji',
+      { expiresIn: '30d' }
+    );
+  } catch (err) {
+    const error = new HttpError('Creating user failed, please try again', 500);
+    return next(error);
+  }
+  res
+    .status(200)
+    .json({ userId: identifiedUser.id, email: identifiedUser.email, token });
 };

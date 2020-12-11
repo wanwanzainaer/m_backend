@@ -1,8 +1,14 @@
 const placesController = require('../controllers/placesController');
 const { check } = require('express-validator');
 const fileUpload = require('../middleware/file-upload');
-
+const checkAuth = require('../middleware/check-auth');
 const router = require('express').Router();
+
+router.get('/user/:uid', placesController.findPlacesByUserId);
+router.get('/:placeId', placesController.findPlaceByPlaceId);
+
+router.use(checkAuth);
+
 router.post(
   '/',
   fileUpload.single('image'),
@@ -13,7 +19,6 @@ router.post(
   ],
   placesController.createPlace
 );
-router.get('/:placeId', placesController.findPlaceByPlaceId);
 router.patch(
   '/:placeId',
   [check('title').not().isEmpty(), check('description').isLength({ min: 5 })],
@@ -21,5 +26,4 @@ router.patch(
 );
 router.delete('/:placeId', placesController.deletePlace);
 
-router.get('/user/:uid', placesController.findPlacesByUserId);
 module.exports = router;

@@ -116,8 +116,13 @@ exports.updatePlace = async (req, res, next) => {
       new HttpError('Could not find the place, Something went wrong', 500)
     );
   }
-  plcae.title = title;
-  plcae.description = description;
+
+  // this object id is mongoose id so must transfer to string
+  if (place.creator.toString() !== req.user.id) {
+    return next(new HttpError('You are not allow to edit this place', 401));
+  }
+  place.title = title;
+  place.description = description;
   try {
     place.save();
   } catch (e) {
@@ -142,6 +147,12 @@ exports.deletePlace = async (req, res, next) => {
 
   if (!place) {
     return next(new HttpError('Could not find place for this id', 404));
+  }
+
+  if (place.creator.id !== req.user.id) {
+    return next(
+      new HttpError('You do not have the auth to delete the post', 401)
+    );
   }
   const imagePath = place.image;
   try {
